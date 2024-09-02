@@ -1,2 +1,2 @@
 # public
-Trulience sampls
+Trulience samples
