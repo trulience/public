@@ -2,7 +2,7 @@
 
 Still in beta. 
 
-## Run following command to git it working
+## Run the following commands to get it working
 
 ```
 npm install
