@@ -6,20 +6,10 @@ const Agent = forwardRef((props: any, ref) => {
 
     // Expose the sendMessage method to send the message to the avatar.
     sendMessage(msg: string) {
-      if (trulienceAvatarRef.current) {
-
-        // Make sure speaker is enabled if not already.
-        if (!speakerEnabled) {
-          let trulienceObj = trulienceAvatarRef.current.getTrulienceObject();
-          if (trulienceObj) {
-            trulienceObj.setSpeakerEnabled(true);
-          }
-        }
-
-        trulienceAvatarRef.current.sendMessage(msg);
-      }
+      let trulienceObj = trulienceAvatarRef.current?.getTrulienceObject();
+      trulienceObj?.sendMessage(msg);
     }
-
+    
   }));
 
   // Fill up with your avatarID and Token values.
@@ -38,9 +28,6 @@ const Agent = forwardRef((props: any, ref) => {
   // Keep track of the server connection status.
   const [serverConnected, setServerConnected] = useState<boolean>(false);
 
-  // Keep track of speaker status. We need it set to enabled before we can hear the avatar.
-  const [speakerEnabled, setSpeakerEnabled] = useState<boolean>(false);
-
   // Provide the media stream to the TrulienceAvatar component.
   useEffect(() => {
     // Check if the ref is set and call a method on it
@@ -49,6 +36,12 @@ const Agent = forwardRef((props: any, ref) => {
       
       // Set the media stream to make avatar speak the text.
       trulienceAvatarRef.current.setMediaStream(mediaStream);
+
+      // Enable speakers
+      let trulienceObj = trulienceAvatarRef.current.getTrulienceObject();
+      if (trulienceObj) {
+        trulienceObj.setSpeakerEnabled(true);
+      }
     } else {
       console.log("Not Calling setMediaStream");
     }
@@ -82,16 +75,11 @@ const Agent = forwardRef((props: any, ref) => {
     console.log("In Agent websocketConnectHandler resp = ", resp);
     setServerConnected(true);
   }
-  const speakerUpdateHandler = (enabled) => {
-    console.log("In Agent speakerUpdateHandler enabled = ", enabled);
-    setSpeakerEnabled(enabled);
-  }
 
   // Event Callbacks list
   const eventCallbacks = [
     {"auth-success" : authSuccessHandler},
-    {"websocket-connect" : websocketConnectHandler},
-    {"speaker-update" : speakerUpdateHandler}
+    {"websocket-connect" : websocketConnectHandler}
   ]
 
   return (
