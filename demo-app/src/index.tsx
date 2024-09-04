@@ -101,6 +101,7 @@ const Agent = forwardRef((props: any, ref) => {
         avatarId={AVATAR_ID}
         token={TOKEN}
         eventCallbacks={eventCallbacks}
+        sttSource="none"
       />
     </div>
   )
