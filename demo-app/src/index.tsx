@@ -1,5 +1,6 @@
 import { TrulienceAvatar } from "trulience-sdk";
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import React from "react";
 
 const Agent = forwardRef((props: any, ref) => {
   useImperativeHandle(ref, () => ({
@@ -9,18 +10,14 @@ const Agent = forwardRef((props: any, ref) => {
       let trulienceObj = trulienceAvatarRef.current?.getTrulienceObject();
       trulienceObj?.sendMessage(msg);
     }
-    
-  }));
 
-  // Fill up with your avatarID and Token values.
-  const AVATAR_ID = "";
-  const TOKEN = "";
+  }));
 
   // Get the received audio track from parent component
   const { audioTrack } = props;
 
   // Maintain a ref to the Trulience Avatar component to call messages on it.
-  const trulienceAvatarRef = useRef(null);
+  const trulienceAvatarRef = useRef<TrulienceAvatar | null>(null);
 
   // Keep track of the media stream created from the audio track
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
@@ -69,29 +66,43 @@ const Agent = forwardRef((props: any, ref) => {
   // Sample for listening to truilence notifications.
   // Refer https://trulience.com/docs#/client-sdk/sdk?id=trulience-events for a list of all the events fired by Trulience SDK.
   const authSuccessHandler = (resp: string) => {
-    console.log("In Agent authSuccessHandler resp = ", resp);
+    console.log("In callback authSuccessHandler resp = ", resp);
   }
-  const websocketConnectHandler = (resp) => {
-    console.log("In Agent websocketConnectHandler resp = ", resp);
+
+  const websocketConnectHandler = (resp: string) => {
+    console.log("In callback websocketConnectHandler resp = ", resp);
     setServerConnected(true);
   }
 
-  // Event Callbacks list
-  const eventCallbacks = [
-    {"auth-success" : authSuccessHandler},
-    {"websocket-connect" : websocketConnectHandler}
-  ]
+  const loadProgress = (progressDetails: { [key: string]: any }) => {
+    console.log("In callback loadProgress progressDetails = ", progressDetails);
+    if (trulienceAvatarRef.current && progressDetails && progressDetails.percent && progressDetails.percent === 1) {
+      console.error("In callback loadProgress percent = ", progressDetails.percent);
+      trulienceAvatarRef.current?.getTrulienceObject()?.sendMessageToAvatar("<trl-load animations='https://digitalhuman.uk/assets/characters/Amie_Rigged_cmp/Amie_Dances.glb' />");
+      console.error("anims loaded in loadProgress");
+    }
+  }
+
+  const eventCallbacks = {
+    "auth-success": authSuccessHandler,
+    "websocket-connect": websocketConnectHandler,
+    "load-progress": loadProgress
+  }
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <TrulienceAvatar 
-        ref={trulienceAvatarRef}
-        avatarId={AVATAR_ID}
-        token={TOKEN}
-        eventCallbacks={eventCallbacks}
-        sttSource="none"
-      />
-    </div>
+      <TrulienceAvatar
+          url={process.env.REACT_APP_TRULIENCE_SDK_URL}
+          ref={trulienceAvatarRef}
+          avatarId={process.env.REACT_APP_TRULIENCE_AVATAR_ID || ''}
+          token={process.env.REACT_APP_TRULIENCE_TOKEN}
+          eventCallbacks={eventCallbacks}
+          width="100%"
+          height="100%"
+          sttSource=""
+          ttsEnabled={false}
+        />
+      </div>
   )
 });
 

@@ -44,14 +44,16 @@ function App() {
     let currentAudioTrack = null;
 
     // Get the audio track and save it.
-    getMedia().then((userMedia) => {
-      currentAudioTrack = userMedia.getAudioTracks()[0];
-      if (currentAudioTrack) {
-        currentAudioTrack.getMediaStreamTrack = (() => { return currentAudioTrack; });
-        setAudioTrack(currentAudioTrack);
-        console.log("Calling then - currentAudioTrack = ", currentAudioTrack);
-      }
-    });
+    if (isCallStarted) {
+      getMedia().then((userMedia) => {
+        currentAudioTrack = userMedia.getAudioTracks()[0];
+        if (currentAudioTrack) {
+          currentAudioTrack.getMediaStreamTrack = (() => { return currentAudioTrack; });
+          setAudioTrack(currentAudioTrack);
+          console.log("Calling then - currentAudioTrack = ", currentAudioTrack);
+        }
+      });
+    }
     return () => {
       // Stop the audio track if active
       if (currentAudioTrack) {
