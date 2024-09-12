@@ -99,8 +99,6 @@ const Agent = forwardRef((props: any, ref) => {
           eventCallbacks={eventCallbacks}
           width="100%"
           height="100%"
-          sttSource=""
-          ttsEnabled={false}
         />
       </div>
   )

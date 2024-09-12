@@ -9,7 +9,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "trulience-sdk": "https://digitalhuman.uk/home/assets/trulience-sdk-1.0.9.tar.gz",
+    "trulience-sdk": "https://digitalhuman.uk/home/assets/trulience-sdk-1.0.10.tar.gz",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
