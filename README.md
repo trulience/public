@@ -1,2 +1,3 @@
-# public
+# Public
+
 Trulience samples

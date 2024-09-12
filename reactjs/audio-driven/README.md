@@ -6,7 +6,7 @@ Still in beta.
 
 Go to the project directory
 ```
-cd demo-app
+cd audio-driven
 ```
 
 Add a .env file with the following contents in this folder
