@@ -13,7 +13,7 @@ REACT_APP_TRULIENCE_SDK_URL=https://trulience.com/sdk/trulience.sdk.js
 REACT_APP_TRULIENCE_AVATAR_ID=<Avatar-ID>
 REACT_APP_TRULIENCE_TOKEN=<TOKEN>
 ```
-You can create an avatar ID after signing on [https://trulience.com/](trulience.com)
+You can create an avatar ID after signing on [https://trulience.com](https://trulience.com)
 
 
 Build and run the app
