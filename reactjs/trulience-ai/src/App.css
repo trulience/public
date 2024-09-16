@@ -1,0 +1,29 @@
+main {
+  padding : 12px;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.message-box {
+  margin-top: 20px; 
+  display: flex;
+  gap: 10px;
+}
+
+.agent-wrapper {
+  width: min(100%, 720px); 
+  height: 405px;
+  margin-top: 10px;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  cursor: pointer;
+  min-height: 32px;
+}
