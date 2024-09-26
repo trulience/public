@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="https://trulience.com/home/assets/img/favicon.png">
+    <title>Trulience Embed: iFrame Example</title>
+
+
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+          }
+          button {
+            cursor: pointer;
+          }
+          #textBox{
+            width: calc(100vw - 20px);
+            top: calc(100vh - 20px);
+            font-family: Arial, sans-serif;
+            font-size: 24px;  
+            padding: 4px;
+          }
+          #root{
+              width: 100vw;
+              background-color: #333;
+              height: calc(100vh - 185px);
+          }
+          .toolbar {
+            display: flex; 
+            margin: 10px; 
+            gap: 10px;
+          }
+      </style>
+
+</head>
+<body>
+    <!--div style="display: flex; gap: 10px; width: 100%; height: calc(100vh - px);" -->
+    <div id="root" >
+      <iframe id="iframeId" frameborder="0" width="100%" height="100%" allow="microphone; fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div id="controls" style="position: absolute; bottom: 0; width: 100vw; height:185px; background-color: transparent;">
+      <div class="toolbar" >
+        <button id="connect" style="padding: 10px;" onclick="startCall()" >Call</button>
+        <button id="disconnect" style="padding: 10px;" onclick="endCall()" disabled>End Call</button>
+        <button id="micButton" onclick="toggleMic()" style="padding: 10px;" disabled>Mute Mic</button>
+        <button id="speakerButton" onclick="toggleSpeaker()" style="padding: 10px;" disabled>Mute Speaker</button>
+      </div>
+      <div class="toolbar" >
+        <!--input type="text" id="textBox" placeholder="Enter text" style="bottom-marging:10px; padding: 10px;" onkeypress="return handleKeyPress(event);" /-->
+        <textarea id="textBox" rows="3" ></textarea>
+        <button id="submitButton" onclick="sendText()" style="padding: 10px;">Submit</button>
+      </div>
+    </div>
+
+    <script>
+        // Set the iframe source.
+        var providedAvatarId = getUrlParameter("avatarId");
+        var avatarId = providedAvatarId === '' ? '12345' : providedAvatarId;
+        var connect = getUrlParameter("connect");
+        var token = getUrlParameter("token");
+    
+        let src =`./index.html?avatarId=${avatarId}${token ? `&token=${token}` : ""}&connect=true&showFullscreenAvatar=true&registerTrlEvents=auth-success,auth-fail,mic-update,mic-access,speaker-update,media-connected`;
+        
+        let iframe = document.getElementById("iframeId");
+        
+        if (connect === "true") {
+            startCall();
+        }
+        
+        // Some variables to track the state.
+        let micEnabled = false;
+        let speakerEnabled = false;
+            
+        // Listen for messages from the iframe
+        window.addEventListener('message', function (event) {
+            // Check the origin of the message.
+            if (event.origin) {
+                // verify the origin here. If not as expected, return.
+            }
+            
+            if (event.data !== null && event.data !== undefined) {
+                let eventName = event.data.eventName;
+                let eventParams = event.data.eventParams;
+                let eventParamsStr = JSON.stringify(eventParams);
+                if (eventName) {
+                    // Received event notifications from trulience sdk.
+                    console.log("Event name = " + eventName + " | Event parameters = " + eventParamsStr);
+                }
+                
+                // Event received for no mic permission. Will be triggered when microphone is tried to be accessed but no permission.
+                if (eventName === "mic-access") {
+                    let micAccessAvailable = eventParams.permissionGranted;
+                    if (!micAccessAvailable) {
+                        console.log("Mic access permission not available.");
+                    }
+                }
+                
+                // Event received for mic status update i.e. start/stop listening to users.
+                if (eventName === "mic-update") {
+                    micEnabled = (eventParamsStr.trim().toLowerCase() === "true" ? true : false);
+                    let micButton = document.getElementById("micButton");
+                    micButton.innerHTML = micEnabled ? "Mute Mic" : "Unmute Mic";
+                    console.log("MicEnabled = ", micEnabled);
+                }
+                
+                // Event received for audio status update i.e. start/stop listening to audio.
+                if (eventName === "speaker-update") {
+                    console.log("eventParamsStr = '" + eventParamsStr.trim().toLowerCase() + "'");
+                    speakerEnabled = (eventParamsStr.trim().toLowerCase() === "true");
+                    let speakerButton = document.getElementById("speakerButton");
+                    speakerButton.innerHTML = speakerEnabled ? "Mute Speaker" : "Unmute Speaker";
+                    console.log("SpeakerEnabled = ", speakerEnabled);
+                }
+
+                if (eventName === "media-connected" || eventName === "auth-success") {
+                  document.getElementById("micButton").disabled = false;
+                  document.getElementById("speakerButton").disabled = false;
+                  document.getElementById("disconnect").disabled = false;
+                  document.getElementById("connect").disabled = true;
+                }
+               
+                // Received a chat message.
+                if (eventName === "trl-chat") {
+                    if (eventParams.sttResponse) {
+                        addText("User: " + eventParams.message);
+                    } else {
+                        addText("Avatar: " + eventParams.message);
+                    }
+                }
+
+                if(event === "trl-obj") {
+                    console.log("trulienceObject ===> ", eventParams)
+                }
+            }
+        });
+		
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+		function addText(text) {
+/*			var chatHistoryTA = document.getElementById('chatHistory');
+			chatHistoryTA.value = chatHistoryTA.value + text + "\n";
+			chatHistoryTA.scrollTop = chatHistoryTA.scrollHeight;
+*/
+		}
+		
+        // Send the message to trulience client present within iframe.
+        function sendText() {
+            var textBoxContent = document.getElementById('textBox').value;
+			var dataToSend = { "command" : "trl-chat-send", "message" : textBoxContent};
+			
+			// Reference to the iframe
+	        var iframe = document.getElementById('iframeId');
+			iframe.contentWindow.postMessage(dataToSend, "*");
+			addText("User: " + textBoxContent)
+			
+			// Clear the text box
+			document.getElementById('textBox').value = "";
+        }
+        
+        function toggleMic() {
+            var dataToSend = { "command" : "trl-mic-set", "message" : !micEnabled };
+            console.log("Sending to frame : ", dataToSend);
+            var iframe = document.getElementById('iframeId');
+            iframe.contentWindow.postMessage(dataToSend, "*");
+        }
+
+        function toggleSpeaker() {
+            let context = new (window.AudioContext || window.webkitAudioContext)();
+            if (context.state === "suspended") {
+                console.log("In parent resuming context");
+                context.resume();
+            }
+            
+            var dataToSend = { "command" : "trl-speaker-set", "message" : !speakerEnabled };
+            console.log("Sending to frame : ", dataToSend);
+            var iframe = document.getElementById('iframeId');
+            iframe.contentWindow.postMessage(dataToSend, "*");
+        }
+         
+        function startCall() {
+            // Set iframe source to initiate connection
+            iframe.src = src;
+            document.getElementById("connect").disabled = true;
+        }
+
+        function endCall() {
+            const dataToSend = { "command" : "end-call" };
+            console.log("Sending to frame : ", dataToSend);
+            const iframe = document.getElementById('iframeId');
+            iframe.contentWindow.postMessage(dataToSend, "*");
+            document.getElementById("micButton").disabled = true;
+            document.getElementById("speakerButton").disabled = true;
+            document.getElementById("disconnect").disabled = true;
+            document.getElementById("connect").disabled = false;
+        
+            iframe.src = ""
+        }
+
+		function handleKeyPress(e)
+		{
+		    // look for window.event in case event isn't passed in
+		    e = e || window.event;
+		    if (e.keyCode == 13)
+		    {
+		        sendText();
+		        return false;
+		    }
+		    return true;
+		}
+        
+    </script>
+</body>
+</html>
+

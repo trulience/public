@@ -1,0 +1,50 @@
+textarea {
+  resize: none;
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.header {
+  margin: 0
+}
+
+.control-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.message-box {
+  margin-top: 20px; 
+  display: flex;
+  gap: 10px;
+}
+
+
+.agentContainer {
+  padding: 12px; 
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 24px);
+  gap: 12px;
+}
+
+.avatarContainer {
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
+.error-message {
+  position: absolute;
+  overflow: hidden;
+  z-index: 1000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 24px;
+}
