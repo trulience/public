@@ -62,7 +62,7 @@
         var connect = getUrlParameter("connect");
         var token = getUrlParameter("token");
     
-        let src =`${window.origin}?avatarId=${avatarId}${token ? `&token=${token}` : ""}&connect=true&showFullscreenAvatar=true&registerTrlEvents=auth-success,auth-fail,mic-update,mic-access,speaker-update,media-connected`;
+        let src =`./index.html?avatarId=${avatarId}${token ? `&token=${token}` : ""}&connect=true&showFullscreenAvatar=true&registerTrlEvents=auth-success,auth-fail,mic-update,mic-access,speaker-update,media-connected`;
         
         let iframe = document.getElementById("iframeId");
         
@@ -219,3 +219,4 @@
     </script>
 </body>
 </html>
+
