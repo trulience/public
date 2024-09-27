@@ -8,7 +8,8 @@ const useAppQueryParams = () => {
     avatarId: { type: String, default: process.env.REACT_APP_TRULIENCE_AVATAR_ID ?? "" },
     token: { type: String,  default: process.env.REACT_APP_TRULIENCE_TOKEN ?? "" },
     sdkURL: { type: String, default: process.env.REACT_APP_TRULIENCE_SDK_URL ?? ""},
-    loadingBarColor: { type: String, default: "rgb(255, 98, 0)" }
+    loadingBarColor: { type: String, default: "rgb(255, 98, 0)" },
+    avatarBackgroundColor: { type: String, default: "rgb(51, 51, 51)" }
   });
   
   return queryParams

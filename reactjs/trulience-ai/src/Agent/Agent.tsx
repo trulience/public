@@ -107,13 +107,14 @@ const Agent = () => {
       {state.isCallStated && (
         <div className="avatarContainer">
           <TrulienceAvatar
+            width="100%"
+            height="100%"
             url={queryParams.sdkURL}
             ref={trulienceAvatarRef}
             avatarId={queryParams.avatarId}
             token={queryParams.token}
             eventCallbacks={eventCallbacks}
-            width="100%"
-            height="100%"
+            backgroundColor={queryParams.avatarBackgroundColor}
           />
 
           <ProgressBar
