@@ -25,6 +25,7 @@ const Agent = () => {
   useEffect(() => {
     if (queryParams.connect) {
       dispatch({ type: "SET_CALL_STARTED", payload: true });
+      dispatch({ type: "SET_LOADING_PROGRESS", payload: 5 })
     }
   }, [queryParams.connect]);
 
