@@ -24,7 +24,7 @@ const ProgressBar = ({ bgcolor, completed, hideProgressBar }: { bgcolor: string,
   }
 
 
-  if (completed == 100 || hideProgressBar) {
+  if (completed === 100 || hideProgressBar) {
     return null;
   }
 

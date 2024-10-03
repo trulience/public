@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import useAppQueryParams from "./useAppQueryParams";
 import { TrulienceAvatar } from "trulience-sdk";
 
@@ -104,6 +104,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
     return () => {
       window.removeEventListener("message", handlePostMessage, false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trulienceAvatarRef]);
   
 

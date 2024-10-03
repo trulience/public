@@ -47,6 +47,7 @@ const useQueryParams = <T extends QueryParamTypeMap>(typeMap: T): {
     });
 
     return parsedParams;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.search]);
 };
 

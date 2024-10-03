@@ -27,7 +27,7 @@ const Agent = () => {
       dispatch({ type: "SET_CALL_STARTED", payload: true });
       dispatch({ type: "SET_LOADING_PROGRESS", payload: 5 })
     }
-  }, [queryParams.connect]);
+  }, [queryParams.connect, dispatch]);
 
 
   // Event Handler
