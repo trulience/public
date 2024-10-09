@@ -2,10 +2,9 @@
 
 This application can be run as a standalone app or integrated into an iframe.
 
-
 ### Run the following commands to get it working
 
-Go to the project directory
+Go to the project directory:
 ```
 cd trulience-ai
 ```
@@ -13,13 +12,11 @@ cd trulience-ai
 Add a .env file with the following contents in this folder
 ```
 REACT_APP_TRULIENCE_SDK_URL=https://trulience.com/sdk/trulience.sdk.js
-REACT_APP_TRULIENCE_AVATAR_ID=<Avatar-ID>
-REACT_APP_TRULIENCE_TOKEN=<TOKEN>
+REACT_APP_TRULIENCE_AVATAR_ID=XXXXXXXXXXXXXXXXXXXX
+REACT_APP_TRULIENCE_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
-You can create an avatar ID after signing on [https://trulience.com](https://trulience.com)
 
-
-Build and run the app
+Build and run the app using:
 ```
 npm install
 npm run build
