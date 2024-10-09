@@ -1,6 +1,3 @@
-# Trulience Samples
+# Trulience ReactJS Sample Code
 
-The directories below provide code for driving an avatar using a simple audio stream or alternatively, using default Trulience AI for STT/LLM/TTS to drive the way in which an avatar interacts.
-
-- [Audio Driven](./reactjs/audio-driven)
-- [Trulience AI](./reactjs/trulience-ai)
+In this repository you will find code to embed a Trulience avatar directly into a ReactJS app.
