@@ -1,6 +1,8 @@
-# Sample app to demonstrate usage of the Trulience SDK being driven by an audio mediastream via npm
+# Audio driven interactive avatar
 
-## Run the following commands to get it working
+## Sample app to demonstrate usage of the Trulience SDK being driven by an audio mediastream via npm
+
+### Run the following commands to get it working
 
 Go to the project directory:
 ```
