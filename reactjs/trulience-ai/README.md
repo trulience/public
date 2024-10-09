@@ -1,6 +1,6 @@
 # Sample code
 
-This demo uses a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers.
+Follow the instructions below to drive your avatar using Trulience-connected STT, LLM and TTS providers.
 
 ### Instructions
 
@@ -24,7 +24,7 @@ npm run build
 npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view your interactive avatar in a browser.
 
 ### Query Parameters
 
