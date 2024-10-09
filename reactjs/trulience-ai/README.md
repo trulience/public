@@ -1,6 +1,6 @@
-# Sample app to demo usage of Trulience SDK with default TTS/SST via npm
+# Sample app to demonstrate usage of the Trulience SDK with SST/LLM/TTS providers via npm
 
-This application can be run as a standalone app or integrated into an iframe.
+This application can be run as a standalone app or integrated by embedding it into an iframe.
 
 ### Run the following commands to get it working
 
@@ -9,12 +9,13 @@ Go to the project directory:
 cd trulience-ai
 ```
 
-Add a .env file with the following contents in this folder
+In this folder, add a .env file with the following contents:
 ```
 REACT_APP_TRULIENCE_SDK_URL=https://trulience.com/sdk/trulience.sdk.js
 REACT_APP_TRULIENCE_AVATAR_ID=XXXXXXXXXXXXXXXXXXXX
 REACT_APP_TRULIENCE_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
+Note: You can find your authorisation token under *Account* when logged into [Trulience](https://www.trulience.com). Each avatar has its own avatar ID which is available once your avatar has been created.
 
 Build and run the app using:
 ```
@@ -25,10 +26,9 @@ npm run start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-
 ### Query Parameters
 
-When integrating the app in an iframe, the following query parameters can be utilized:
+When integrating the app in an iframe, the following query parameters can be used:
 
 | Parameter                 | Type     | Default Value                                | Description                                                              |
 |---------------------------|----------|----------------------------------------------|--------------------------------------------------------------------------|
@@ -41,7 +41,7 @@ When integrating the app in an iframe, the following query parameters can be uti
 | `loadingBarColor`         | String   | `rgb(255, 98, 0)`                            | The color of the loading bar.                                            |
 
 
-### Events from Parent Iframe
+### Events from Parent iframe
 
 The following events can be sent from the parent iframe to the app:
 
