@@ -2,7 +2,7 @@
 
 This demo uses a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers.
 
-### Run the following commands to get it working
+### Instructions
 
 Go to the project directory:
 ```
