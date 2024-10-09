@@ -1,8 +1,8 @@
 # Audio driven interactive avatar
 
-## Sample app to demonstrate usage of the Trulience SDK being driven by an audio mediastream via npm
+This demo uses a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers.
 
-### Run the following commands to get it working
+## Run the following commands to get it working
 
 Go to the project directory:
 ```
