@@ -1,7 +1,5 @@
 # Sample app to demonstrate usage of the Trulience SDK being driven by an audio mediastream via npm
 
-Still in beta. 
-
 ## Run the following commands to get it working
 
 Go to the project directory:
