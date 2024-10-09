@@ -1,8 +1,8 @@
-# Audio driven interactive avatar
+# Sample code
 
-This demo uses a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers.
+Follow the instructions below to drive your interactive avatar with an audio mediastream.
 
-## Run the following commands to get it working
+## Instructions
 
 Go to the project directory:
 ```
@@ -24,4 +24,4 @@ npm run build
 npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view your avatar in a browser.
