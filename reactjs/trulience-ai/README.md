@@ -1,4 +1,4 @@
-# Sample app to demonstrate usage of the Trulience SDK with SST/LLM/TTS providers via npm
+# Sample app to demonstrate usage of a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers via npm
 
 This application can be run as a standalone app or integrated by embedding it into an iframe.
 
