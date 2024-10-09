@@ -11,12 +11,13 @@ cd audio-driven
 
 In this folder, add a .env file with the following contents:
 ```
-REACT_APP_TRULIENCE_SDK_URL=https://digitalhuman.uk/home/assets/trulience.sdk.js
-REACT_APP_TRULIENCE_AVATAR_ID=1832157654720400978
-REACT_APP_TRULIENCE_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUb2tlbiBmcm9tIGN1c3RvbSBzdHJpbmciLCJleHAiOjQ4NzU0MDAzNTV9.YAD8AtI915qA2HZC21U2Arlpoi4wmJ91g5leb0Ez77irxQqogU-eHEBZJE40HtL777R33gchTfWxA8UhL4M_Eg
+REACT_APP_TRULIENCE_SDK_URL=https://trulience.com/sdk/trulience.sdk.js
+REACT_APP_TRULIENCE_AVATAR_ID=XXXXXXXXXXXXXXXXXXXX
+REACT_APP_TRULIENCE_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
+Note: You can find your authorisation token under *Account* when logged into Trulience. Each avatar has its own avatar ID which is available once your avatar has been created.
 
-Build and run the app using:
+Build and run the sample app using:
 ```
 npm install
 npm run build
