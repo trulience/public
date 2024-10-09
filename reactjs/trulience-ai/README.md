@@ -1,6 +1,6 @@
-# Sample app to demonstrate usage of a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers via npm
+# Sample code
 
-This application can be run as a standalone app or integrated by embedding it into an iframe.
+This demo uses a Trulience avatar set up to use Trulience-connected STT, LLM and TTS providers.
 
 ### Run the following commands to get it working
 
