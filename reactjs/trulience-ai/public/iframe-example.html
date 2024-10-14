@@ -139,8 +139,8 @@
 		
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
         
@@ -153,11 +153,11 @@
 		
         // Send the message to trulience client present within iframe.
         function sendText() {
-            var textBoxContent = document.getElementById('textBox').value;
-			var dataToSend = { "command" : "trl-chat-send", "message" : textBoxContent};
+            const textBoxContent = document.getElementById('textBox').value;
+			const dataToSend = { "command" : "trl-chat-send", "message" : textBoxContent};
 			
 			// Reference to the iframe
-	        var iframe = document.getElementById('iframeId');
+	        const iframe = document.getElementById('iframeId');
 			iframe.contentWindow.postMessage(dataToSend, "*");
 			addText("User: " + textBoxContent)
 			
@@ -166,9 +166,9 @@
         }
         
         function toggleMic() {
-            var dataToSend = { "command" : "trl-mic-set", "message" : !micEnabled };
+            const dataToSend = { "command" : "trl-mic-set", "message" : !micEnabled };
             console.log("Sending to frame : ", dataToSend);
-            var iframe = document.getElementById('iframeId');
+            const iframe = document.getElementById('iframeId');
             iframe.contentWindow.postMessage(dataToSend, "*");
         }
 
@@ -179,9 +179,9 @@
                 context.resume();
             }
             
-            var dataToSend = { "command" : "trl-speaker-set", "message" : !speakerEnabled };
+            const dataToSend = { "command" : "trl-speaker-set", "message" : !speakerEnabled };
             console.log("Sending to frame : ", dataToSend);
-            var iframe = document.getElementById('iframeId');
+            const iframe = document.getElementById('iframeId');
             iframe.contentWindow.postMessage(dataToSend, "*");
         }
          

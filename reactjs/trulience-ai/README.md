@@ -50,7 +50,7 @@ The following events can be sent from the parent iframe to the app:
 | `trl-chat-send`          | String           | Triggers sending a chat message.                             |
 | `trl-mic-set`            | Boolean          | Indicates the microphone status (enabled or disabled).       |
 | `trl-speaker-set`        | Boolean          | Indicates the speaker status (enabled or disabled).          |
-| `trl-avatar-chat`        | String           | Triggers sending a message from the avatar.                  |
+| `trl-avatar-chat-send`   | String           | Triggers sending a message from the avatar.                  |
 
 ### Example Event Format
 

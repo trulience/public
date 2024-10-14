@@ -6,7 +6,8 @@ const IframeEvents = {
   CHAT_SEND: "trl-chat-send",   
   MIC_STATUS_SET: "trl-mic-set",
   SPEAKER_STATUS_SET: "trl-speaker-set",
-  AVATAR_CHAT_SEND: "trl-avatar-chat"
+  AVATAR_CHAT_SEND: "trl-avatar-chat-send",
+  TRULIENCE_FUNCTION_EXECUTE: "trl-execute-function"
 }
 
 const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<TrulienceAvatar | null>) => {
@@ -24,7 +25,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
 
   const handleAvatarChat = (trl: any, message: string) => {
     if (typeof message === "string") {
-      trl.sendAvatarMessage(message);
+      trl.sendMessageToAvatar(message);
     } else {
       console.warn("Invalid message type for trl-chat");
     }
@@ -47,6 +48,20 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
       console.warn("Invalid message type for trl-set-speaker-status");
     }
   };
+
+  const executeTrulienceFunction = (trl: any, eventData: { functionName: string, functionArgs: any[] }) => {
+    const { functionName, functionArgs = [] } = eventData
+    if(!functionName) return;
+    const fn = trl[functionName] as Function
+
+    if(!fn || !(fn instanceof Function)) {
+      console.warn(`Error: ${functionName} function not found in Trulience object`)
+      return
+    }
+
+    // Execute the function and pass the function arguments
+    fn.apply(trl, functionArgs)
+  }
 
   const handlePostMessage = (event: MessageEvent<any>) => {
     // Verify the origin of the message to ensure it's from a trusted source.
@@ -87,6 +102,10 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
 
         case IframeEvents.AVATAR_CHAT_SEND:
           handleAvatarChat(trl, eventData.message);
+          break;
+        
+        case IframeEvents.TRULIENCE_FUNCTION_EXECUTE:
+          executeTrulienceFunction(trl, eventData)
           break;
 
         default:
