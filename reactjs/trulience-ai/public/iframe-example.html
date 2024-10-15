@@ -90,6 +90,17 @@
                     console.log("Event name = " + eventName + " | Event parameters = " + eventParamsStr);
                 }
                 
+
+                if (eventName === "trl-method-response") {
+                    console.log("trl-method-response", event.data)
+                    const { callId, status, result, error } = eventParams;
+                    if (status === "success") {
+                        console.log("Success:", result);
+                    } else {
+                        console.error("Error:", error);
+                    }
+                }
+
                 // Event received for no mic permission. Will be triggered when microphone is tried to be accessed but no permission.
                 if (eventName === "mic-access") {
                     let micAccessAvailable = eventParams.permissionGranted;
@@ -154,7 +165,8 @@
         // Send the message to trulience client present within iframe.
         function sendText() {
             const textBoxContent = document.getElementById('textBox').value;
-			const dataToSend = { "command" : "trl-chat-send", "message" : textBoxContent};
+            const dataToSend = { eventName: "trl-method-call", eventParams: { method: "sendMessage", args: [textBoxContent], callId: "msg123"  }};
+            
 			
 			// Reference to the iframe
 	        const iframe = document.getElementById('iframeId');
@@ -166,7 +178,7 @@
         }
         
         function toggleMic() {
-            const dataToSend = { "command" : "trl-mic-set", "message" : !micEnabled };
+            const dataToSend = { eventName: "trl-method-call", eventParams: { method: "setMicEnabled", args: [!micEnabled]  }};
             console.log("Sending to frame : ", dataToSend);
             const iframe = document.getElementById('iframeId');
             iframe.contentWindow.postMessage(dataToSend, "*");
@@ -179,7 +191,7 @@
                 context.resume();
             }
             
-            const dataToSend = { "command" : "trl-speaker-set", "message" : !speakerEnabled };
+            const dataToSend = { eventName: "trl-method-call", eventParams: { "method": "setSpeakerEnabled", "args": [!speakerEnabled]}};
             console.log("Sending to frame : ", dataToSend);
             const iframe = document.getElementById('iframeId');
             iframe.contentWindow.postMessage(dataToSend, "*");
@@ -192,10 +204,6 @@
         }
 
         function endCall() {
-            const dataToSend = { "command" : "end-call" };
-            console.log("Sending to frame : ", dataToSend);
-            const iframe = document.getElementById('iframeId');
-            iframe.contentWindow.postMessage(dataToSend, "*");
             document.getElementById("micButton").disabled = true;
             document.getElementById("speakerButton").disabled = true;
             document.getElementById("disconnect").disabled = true;
