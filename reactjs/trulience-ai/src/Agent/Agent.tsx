@@ -48,15 +48,6 @@ const Agent = () => {
     postMessageToParent("auth-fail", resp)
   };
 
-  const mediaConnectedHandler = () => {
-    // Enable mic and speaker if you want to enable it by default
-    const trulienceObj = trulienceAvatarRef.current?.getTrulienceObject();
-    if (trulienceObj) {
-      trulienceObj.setSpeakerEnabled(true);
-      trulienceObj.setMicEnabled(true, false);
-    }
-  };
-
   const micAccessHandler = (resp: boolean) => {
     if (typeof resp === "boolean") {
       dispatch({ type: "SET_MIC", payload: resp });
@@ -82,7 +73,6 @@ const Agent = () => {
   let eventCallbacks: TrulienceAvatarProps["eventCallbacks"] = {
     "auth-success": authSuccessHandler,
     "auth-fail": authFailHandler,
-    "media-connected": mediaConnectedHandler,
     "load-progress": loadProgressHandler,
   };
 
