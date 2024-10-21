@@ -1,8 +1,12 @@
 import { TrulienceAvatar } from "trulience-sdk";
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import React from "react";
+import useAppQueryParams from "./hooks/useAppQueryParams";
 
 const Agent = forwardRef((props: any, ref) => {
+
+  const { avatarId, sdkURL, token } = useAppQueryParams()
+
   useImperativeHandle(ref, () => ({
 
     // Expose the sendMessage method to send the message to the avatar.
@@ -92,10 +96,10 @@ const Agent = forwardRef((props: any, ref) => {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <TrulienceAvatar
-          url={process.env.REACT_APP_TRULIENCE_SDK_URL}
+          url={sdkURL}
           ref={trulienceAvatarRef}
-          avatarId={process.env.REACT_APP_TRULIENCE_AVATAR_ID || ''}
-          token={process.env.REACT_APP_TRULIENCE_TOKEN}
+          avatarId={avatarId}
+          token={token}
           eventCallbacks={eventCallbacks}
           width="100%"
           height="100%"

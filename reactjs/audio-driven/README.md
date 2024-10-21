@@ -17,7 +17,19 @@ REACT_APP_TRULIENCE_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 Note: You can find your authorisation token under *Account* when logged into [Trulience](https://www.trulience.com). Each avatar has its own avatar ID which is made available to you once your avatar has been created.
 
-Build and run the sample app using:
+
+### Query Parameters
+
+When integrating the app in an iframe, the following query parameters can be utilized:
+
+| Parameter                 | Type     | Default Value                                | Description                                                              |
+|---------------------------|----------|----------------------------------------------|--------------------------------------------------------------------------|
+| `avatarId`                | String   | `process.env.REACT_APP_TRULIENCE_AVATAR_ID`  | The ID of the avatar to be used in the app.                              |
+| `token`                   | String   | `process.env.REACT_APP_TRULIENCE_TOKEN`      | The token used for authentication.                                       |
+| `sdkURL`                  | String   | `process.env.REACT_APP_TRULIENCE_SDK_URL`    | The URL of the SDK to be used.                                           |
+
+
+Build and run the app
 ```
 npm install
 npm run build
