@@ -68,7 +68,7 @@ const fallbackHandler = () => {
 
 const enableNativeEvents = utils.getQueryParam("enableNativeEvents", "false") === "true";
 
-export const callNativeAppFunction = enableNativeEvents
+export const callNativeAppFunction = !enableNativeEvents
   ? fallbackHandler
   : AndroidNativeHandler
   ? callNativeAndroidFunction
@@ -76,6 +76,7 @@ export const callNativeAppFunction = enableNativeEvents
   ? callNativeIOSFunction
   : fallbackHandler;
 
+logger.log("callNativeAppFunction", callNativeAppFunction.name, enableNativeEvents)
 
 class NativeBridge {
   // Create a private static property to hold the singleton instance
