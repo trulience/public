@@ -8,6 +8,10 @@ import AvatarControls from "./components/AvatarControls";
 
 import "./Agent.css";
 import useAppQueryParams from "./hooks/useAppQueryParams";
+import ConsoleLogger from "../helper/ConsoleLogger";
+import nativeBridge from "../helper/nativeBridge";
+
+const logger = new ConsoleLogger("Agent")
 
 const Agent = () => {
 
@@ -65,6 +69,11 @@ const Agent = () => {
 
   const loadProgressHandler = (event: { percent: number }) => {
     dispatch({ type: "SET_LOADING_PROGRESS", payload: event.percent * 100 });
+
+    if(event.percent === 1) {
+      logger.log("Avatar has been loaded completed")
+      nativeBridge.eventAvatarLoaded()
+    }
   };
 
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useAppQueryParams from "./useAppQueryParams";
 import { TrulienceAvatar } from "trulience-sdk";
+import ConsoleLogger from "../../helper/ConsoleLogger";
 
 const IframeEvents = {
   CHAT_SEND: "trl-chat-send",      // Deprecated 
@@ -9,6 +10,8 @@ const IframeEvents = {
   AVATAR_CHAT_SEND: "trl-avatar-chat-send", // Deprecated 
   TRULIENCE_METHOD_CALL: "trl-method-call"   
 }
+
+const logger = new ConsoleLogger("useIframeEventHandle")
 
 const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<TrulienceAvatar | null>) => {
   
@@ -19,7 +22,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
     if (typeof message === "string") {
       trl.sendMessage(message);
     } else {
-      console.warn("Invalid message type for trl-chat");
+      logger.warn("Invalid message type for trl-chat");
     }
   };
 
@@ -28,7 +31,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
     if (typeof message === "string") {
       trl.sendMessageToAvatar(message);
     } else {
-      console.warn("Invalid message type for trl-chat");
+      logger.warn("Invalid message type for trl-chat");
     }
   };
 
@@ -38,7 +41,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
       trl.fixAudioContext();
       trl.setMicEnabled(message, true);
     } else {
-      console.warn("Invalid message type for trl-mic-status");
+      logger.warn("Invalid message type for trl-mic-status");
     }
   };
 
@@ -48,7 +51,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
       trl.fixAudioContext();
       trl.setSpeakerEnabled(message);
     } else {
-      console.warn("Invalid message type for trl-set-speaker-status");
+      logger.warn("Invalid message type for trl-set-speaker-status");
     }
   };
 
@@ -62,7 +65,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
     const { method, args = [], callId } = eventData;
 
      if (!method) {
-      console.warn(`Error: No method specified in eventData.`);
+      logger.warn(`Error: No method specified in eventData.`);
       return;
     }
   
@@ -70,7 +73,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
     const fn = (trl as any)[method] as Function;
 
     if (!fn || typeof fn !== 'function') {
-      console.warn(`Error: Method '${method}' not found in Trulience object.`);
+      logger.warn(`Error: Method '${method}' not found in Trulience object.`);
       return;
     }
 
@@ -87,7 +90,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
       }
 
     } catch (error) {
-      console.error(`Error executing method '${method}':`, error);
+      logger.error(`Error executing method '${method}':`, error);
       // Send error response if callId is provided
       if (callId) {
         window.parent.postMessage(
@@ -110,13 +113,13 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
 
     // If the object is not ready, ignore the event.
     if (!trl) {
-      console.warn("Ignoring event because the object is not yet ready.");
+      logger.warn("Ignoring event because the object is not yet ready.");
       return;
     }
 
     // Ensure the message data is present.
     if (event.data == null) {
-      console.warn("No event data received, ignoring the event.");
+      logger.warn("No event data received, ignoring the event.");
       return;
     }
 
@@ -130,7 +133,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
           break;
 
         default:
-          console.warn("Unknown command received:", eventData.eventName);
+          logger.warn("Unknown command received:", eventData.eventName);
       }
       return
     }
@@ -161,7 +164,7 @@ const useIframeEventHandler = (trulienceAvatarRef: React.MutableRefObject<Trulie
           break;
 
         default:
-          console.warn("Unknown command received:", eventData.command);
+          logger.warn("Unknown command received:", eventData.command);
       }
     }
    
