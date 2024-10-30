@@ -3,7 +3,7 @@ import React from "react";
 const ProgressBar = ({ bgcolor, completed, hideProgressBar }: { bgcolor: string, completed: number, hideProgressBar: boolean }) => {
 
   const containerStyles: React.CSSProperties = {
-    height: 20,
+    height: 10,
     width: '40vw',
     backgroundColor: "#e0e0de",
     borderRadius: 10,
