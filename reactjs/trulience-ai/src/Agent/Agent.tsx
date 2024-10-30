@@ -25,6 +25,17 @@ const Agent = () => {
   // Hook to handle messages from the parent.
   const { registerTrulienceEvents, postMessageToParent} = useIframeEventHandler(trulienceAvatarRef);
 
+
+  useEffect(() => {
+    if(queryParams.disableMic) {
+      // Override getUserMedia to block microphone access
+      navigator.mediaDevices.getUserMedia = (constraints) => {
+        logger.log('Blocked microphone access:', constraints);
+        return Promise.reject(new Error('Microphone access is blocked.'));
+      };
+    }
+  }, [queryParams.disableMic]);
+
   // Automatically connect the avatar if connect is set to true
   useEffect(() => {
     if (queryParams.connect) {

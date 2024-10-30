@@ -9,7 +9,8 @@ const useAppQueryParams = () => {
     token: { type: String,  default: process.env.REACT_APP_TRULIENCE_TOKEN ?? "" },
     sdkURL: { type: String, default: process.env.REACT_APP_TRULIENCE_SDK_URL ?? ""},
     loadingBarColor: { type: String, default: "rgb(255, 98, 0)" },
-    avatarBackgroundColor: { type: String, default: "rgb(51, 51, 51)" }
+    avatarBackgroundColor: { type: String, default: "rgb(51, 51, 51)" },
+    disableMic: { type: String, default: false }
   });
   
   return queryParams
