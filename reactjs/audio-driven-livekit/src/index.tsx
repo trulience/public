@@ -14,7 +14,7 @@ const Agent = forwardRef((props: any, ref) => {
   }));
 
   // Get the received audio track from parent component
-  const { audioTrack } = props;
+  const { audioTrack, avatarId } = props;
 
   // Maintain a ref to the Trulience Avatar component to call messages on it.
   const trulienceAvatarRef = useRef<TrulienceAvatar | null>(null);
@@ -124,7 +124,7 @@ const Agent = forwardRef((props: any, ref) => {
       <TrulienceAvatar
           url={process.env.REACT_APP_TRULIENCE_SDK_URL}
           ref={trulienceAvatarRef}
-          avatarId={process.env.REACT_APP_TRULIENCE_AVATAR_ID || ''}
+          avatarId={avatarId}
           token={process.env.REACT_APP_TRULIENCE_TOKEN}
           eventCallbacks={eventCallbacks}
           width="100%"

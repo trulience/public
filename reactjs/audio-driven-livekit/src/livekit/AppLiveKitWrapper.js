@@ -10,6 +10,7 @@ function AppLiveKitWrapper() {
   const [message, setMessage] = useState("");
   const [tempMessage, setTempMessage] = useState("");
   const [token, setToken] = useState(null);
+  const [avatarId, setAvatarId] = useState("");
 
   // This will hold the mic toggle function provided by App
   // const [toggleMicFunction, setToggleMicFunction] = useState<(() => Promise<boolean>) | null>(null);
@@ -20,6 +21,12 @@ function AppLiveKitWrapper() {
   // Handle start call
   const handleStartCall = async () => {
     try {
+      // const urlParams = new URLSearchParams(window.location.search);
+      // const lang = urlParams.get('lang');
+
+      const query = new URLSearchParams(window.location.search);
+      const avatarId = query.get("avatarId");
+      setAvatarId(avatarId ?? process.env.REACT_APP_TRULIENCE_AVATAR_ID);
       const apiKey = process.env.REACT_APP_LIVEKIT_API_KEY || ""; // Ensure your API key is set
       const apiSecret = process.env.REACT_APP_LIVEKIT_API_SECRET || ""; // Ensure your API secret is set
       const tokenService = new TokenService(apiKey, apiSecret);
@@ -114,6 +121,7 @@ function AppLiveKitWrapper() {
             connectAvatar={liveKitConnected}
             setToggleMicFunction={setToggleMicFunction} // Pass the setter for toggleMicFunction
             message={message}
+            avatarId={avatarId}
           />
 
           <RoomAudioRenderer volume="0"/>

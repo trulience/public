@@ -97,6 +97,7 @@ function App(props) {
             ref={agentRef}
             // Pass the audio track to the component.
             audioTrack = {audioTrack} 
+            avatarId = {props.avatarId}
           />
         </div>
       }
