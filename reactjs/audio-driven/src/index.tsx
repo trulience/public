@@ -68,7 +68,7 @@ const Agent = forwardRef((props: any, ref) => {
   }, [audioTrack, serverConnected]);
 
   // Sample for listening to truilence notifications.
-  // Refer https://trulience.com/docs#/client-sdk/sdk?id=trulience-events for a list of all the events fired by Trulience SDK.
+  // Refer https://www2.trulience.com/docs#/client-sdk/sdk?id=trulience-events for a list of all the events fired by Trulience SDK.
   const authSuccessHandler = (resp: string) => {
     console.log("In callback authSuccessHandler resp = ", resp);
   }

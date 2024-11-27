@@ -11,11 +11,11 @@ cd audio-driven
 
 In this folder, add a .env file with the following contents:
 ```
-REACT_APP_TRULIENCE_SDK_URL=https://trulience.com/sdk/trulience.sdk.js
+REACT_APP_TRULIENCE_SDK_URL=https://www2.trulience.com/sdk/trulience.sdk.js
 REACT_APP_TRULIENCE_AVATAR_ID=XXXXXXXXXXXXXXXXXXXX
 REACT_APP_TRULIENCE_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
-Note: You can find your authorisation token under *Account* when logged into [Trulience](https://www.trulience.com). Each avatar has its own avatar ID which is made available to you once your avatar has been created.
+Note: You can find your authorisation token under *Account* when logged into [Trulience](https://www2.trulience.com). Each avatar has its own avatar ID which is made available to you once your avatar has been created.
 
 
 ### Query Parameters

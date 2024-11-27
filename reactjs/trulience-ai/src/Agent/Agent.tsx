@@ -89,7 +89,7 @@ const Agent = () => {
 
 
   // Sample for listening to trulience notifications.
-  // Refer https://trulience.com/docs#/client-sdk/sdk?id=trulience-events for a list of all the events fired by Trulience SDK.
+  // Refer https://www2.trulience.com/docs#/client-sdk/sdk?id=trulience-events for a list of all the events fired by Trulience SDK.
   let eventCallbacks: TrulienceAvatarProps["eventCallbacks"] = {
     "auth-success": authSuccessHandler,
     "auth-fail": authFailHandler,

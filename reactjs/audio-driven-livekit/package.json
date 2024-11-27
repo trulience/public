@@ -10,7 +10,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "trulience-sdk": "https://trulience.com/home/assets/trulience-sdk-1.0.11.tar.gz",
+    "trulience-sdk": "https://www2.trulience.com/home/assets/trulience-sdk-1.0.11.tar.gz",
     "web-vitals": "^2.1.4",
     "js-yaml": "^4.1.0",
     "livekit-client": "^2.5.1",
