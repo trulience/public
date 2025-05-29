@@ -4,22 +4,22 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
+    "@livekit/components-react": "^2.6.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "trulience-sdk": "https://trulience.com/release/prod/latest/trulience-sdk.tar.gz",
-    "web-vitals": "^2.1.4",
+    "@trulience/react-sdk": "^1.0.91",
     "js-yaml": "^4.1.0",
     "livekit-client": "^2.5.1",
     "livekit-server-sdk": "^2.6.1",
-    "@livekit/components-react": "^2.6.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.9",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.16.5"
   },
   "scripts": {

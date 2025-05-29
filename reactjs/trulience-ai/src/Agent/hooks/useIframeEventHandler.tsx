@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useAppQueryParams from "./useAppQueryParams";
-import { TrulienceAvatar } from "trulience-sdk";
+import { TrulienceAvatar } from "@trulience/react-sdk";
 import ConsoleLogger from "../../helper/ConsoleLogger";
 
 const IframeEvents = {

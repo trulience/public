@@ -1,4 +1,4 @@
-import { TrulienceAvatar } from "trulience-sdk";
+import { TrulienceAvatar } from "@trulience/react-sdk";
 import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import React from "react";
 

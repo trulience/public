@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TrulienceAvatar, TrulienceAvatarProps } from "trulience-sdk";
+import { TrulienceAvatar, TrulienceAvatarProps } from "@trulience/react-sdk";
 import { useRef } from "react";
 import { useAvatarContext } from "./context/AvatarContext";
 import ProgressBar from "./components/ProgressBar";
