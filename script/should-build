@@ -1,0 +1,17 @@
+#!/bin/bash
+
+git pull 2> /dev/null > /dev/null
+
+CURRENT=$(git log | head -1|awk '{print $2}')
+echo $CURRENT
+echo $CURRENT > current-commit
+LAST=$(cat last-build-commit 2> /dev/null)
+
+if [ "$CURRENT" == "$LAST" ]; then
+	#echo No build required
+	exit -1
+else
+	#echo Build required
+	exit 0
+fi
+
