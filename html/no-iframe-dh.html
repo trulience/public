@@ -1,0 +1,376 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="https://trulience.com/home/assets/img/favicon.png"
+    />
+    <title>Trulience Embed: No iFrame Example</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      #textBox {
+        width: calc(100vw - 20px);
+        top: calc(100vh - 20px);
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        padding: 4px;
+      }
+      #root {
+        width: 100vw;
+        background-color: #333;
+        height: calc(100vh - 185px);
+      }
+      .toolbar {
+        display: flex;
+        margin: 10px;
+        gap: 10px;
+      }
+      #progress {
+        position: absolute;
+        top: calc(100vh - 250px);
+        width: 80%;
+        background-color: #333;
+        color: white;
+        visibility: hidden;
+        text-align: center;
+      }
+      .swal2-popup {
+        font-size: 20px;
+        padding: 0px;
+        margin: 0px;
+        padding: 0px;
+        width: 35em !important;
+      }
+      .swal2-container .swal2-html-container {
+        text-align: left;
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      <!-- Load SDK -->
+      const origin = window.origin;
+      const scriptSrc = `${origin}/sdk/trulience.sdk.js`;
+      const script = document.createElement('script');
+      script.src = scriptSrc;
+      document.body.appendChild(script);
+
+      var trulience = null;
+      var needMicAccess = false;
+      var host = window.location.hostname;
+      const avatarId = getParameter('avatarId');
+      const connect = getBooleanParameter('connect');
+      const token = getParameter('token');
+
+      // id of video element to display avatar
+      let videoElements = {
+        remoteVideo: 'myvideo',
+      };
+
+      function authSuccessHandler(resp) {
+        console.log('Auth succeeded!');
+        trulience.connectGateway();
+      }
+
+      function authFailHandler(error) {
+        console.error('Auth failed: ', JSON.stringify(error));
+        Swal.fire({
+          title: 'Authentication Error',
+          html: `<div>${error.errorTitle}: ${error.errorTitle == 'Invalid Avatar Id' ? 'We could not find an avatar matching this ID: ' + avatarId : error.message}</div>`,
+        });
+      }
+
+      function showMicPermissionsErrorDialog() {
+        Swal.fire({
+          html: `
+            <h2 style="margin-top:0px;margin-bottom:0px;margin-left:23px;margin-right:23px">Your microphone is disabled <h2>
+            <div style='width: 100%; text-align:left; font-size: 18px; overflow: auto; height: auto;' >
+              <ol type="1" style="margin: 4px;">
+                <li> Click the icon in your browser's address bar
+                <li> Enable your microphone
+              </ol>
+            </div>
+            `,
+          imageUrl: 'https://trulience.com/home/assets/img/MicPermissions.png',
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: 'Permission image',
+        });
+      }
+
+      function onNetworkStatusChange() {
+        const onLine = navigator.onLine;
+        if (onLine) {
+          Swal.close();
+        } else {
+          // OffLine
+          // showPopup
+          Swal.fire({
+            title: 'You have been disconnected',
+            text: 'You will be reconnected as soon as your internet connection is restored.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+          });
+        }
+      }
+
+      function startNetworkMonitoring() {
+        window.addEventListener('online', onNetworkStatusChange);
+        window.addEventListener('offline', onNetworkStatusChange);
+      }
+
+      function micAccessUpdateHandler(details) {
+        console.log(
+          'In micAccessUpdateHandler html page - details = ',
+          details
+        );
+        if (!details.permissionGranted) {
+          micUpdateHandler(false);
+        }
+
+        if (details.needMicAccess) {
+          needMicAccess = true;
+        } else {
+          needMicAccess = false;
+        }
+      }
+
+      function speakerUpdateHandler(status) {
+        console.log('Speaker Update status - ' + status);
+        if (status) {
+          document.getElementById('speakerButton').innerHTML = 'Mute Speaker';
+        } else {
+          document.getElementById('speakerButton').innerHTML = 'Unmute Speaker';
+        }
+      }
+
+      function micUpdateHandler(status) {
+        console.log('Mic Update status - ' + status);
+        if (status) {
+          document.getElementById('micButton').innerHTML = 'Mute Mic';
+        } else {
+          document.getElementById('micButton').innerHTML = 'Unmute Mic';
+        }
+      }
+
+      function mediaConnectHandler() {
+        console.log('In mediaConnectHandler');
+        trulience.setMicEnabled(true);
+        trulience.setSpeakerEnabled(true);
+        document.getElementById('connect').disabled = true;
+        document.getElementById('submitButton').disabled = false;
+        document.getElementById('micButton').disabled = false;
+        document.getElementById('speakerButton').disabled = false;
+      }
+
+      function mediaDisconnectHandler() {
+        console.log('In mediaDisconnectHandler');
+        document.getElementById('connect').disabled = false;
+        document.getElementById('disconnect').disabled = true;
+        document.getElementById('submitButton').disabled = true;
+        document.getElementById('micButton').disabled = true;
+        document.getElementById('speakerButton').disabled = true;
+      }
+
+      function websocketMessageHandler(resp) {
+        let messageType = resp.messageType;
+        if (messageType === window.Trulience.MessageType.ChatText) {
+          // Ignore the acknowledgement messages.
+          if (
+            resp.status === 'MESSAGE_DELIVERED_TO_VPS' ||
+            resp.status === 'MESSAGE_NOT_DELIVERED_TO_VPS'
+          ) {
+            return;
+          }
+
+          if (resp.sttResponse === true) {
+            // Received stt message.
+            console.log(
+              'Received STT Message - ' + resp.messageArray[0].message
+            );
+          }
+        }
+      }
+
+      // Auto connect if asked so.
+      window.onload = () => {
+        if (connect) {
+          startCall();
+        }
+
+        startNetworkMonitoring();
+      };
+
+      window.onunload = function () {
+        this.endCall();
+      };
+
+      function getBooleanParameter(paramName) {
+        const paramValue = getParameter(paramName);
+        return paramValue !== null && paramValue.toLowerCase() === 'true';
+      }
+
+      function getParameter(paramName) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramValue = urlParams.get(paramName);
+        return paramValue;
+        return paramValue !== null && paramValue.toLowerCase() === 'true';
+      }
+
+      function startCall() {
+        // Clear exsiting object.
+        if (trulience) {
+          trulience = null;
+        }
+
+        // Create a new trulience object.
+        trulience = Trulience.Builder()
+          .setAvatarId(avatarId)
+          .setToken(token)
+          .setUserName('Guest')
+          .enableAvatar(true)
+          .setRetry(false)
+          .registerVideoElements(videoElements)
+          .build();
+
+        // Register for the events.
+        trulience.on('mic-access', micAccessUpdateHandler);
+        trulience.on('auth-success', authSuccessHandler);
+        trulience.on('auth-fail', authFailHandler);
+        trulience.on('speaker-update', speakerUpdateHandler);
+        trulience.on('mic-update', micUpdateHandler);
+        trulience.on('websocket-message', websocketMessageHandler);
+        trulience.on('media-connected', mediaConnectHandler);
+        trulience.on('media-disconnected', mediaDisconnectHandler);
+        trulience.on('load-progress', loadProgress);
+
+        // Trigger auth.
+        trulience.authenticate();
+        document.getElementById('disconnect').disabled = false;
+        document.getElementById('connect').disabled = true;
+      }
+
+      function endCall(reason) {
+        if (trulience) {
+          trulience.disconnectGateway(reason);
+
+          // Unregister for the events.
+          trulience.off('mic-access', micAccessUpdateHandler);
+          trulience.off('auth-success', authSuccessHandler);
+          trulience.off('speaker-update', speakerUpdateHandler);
+          trulience.off('mic-update', micUpdateHandler);
+          trulience.off('websocket-message', websocketMessageHandler);
+          trulience.off('media-connected', mediaConnectHandler);
+          trulience.off('media-disconnected', mediaDisconnectHandler);
+          trulience.off('load-progress', loadProgress);
+          document.getElementById('progress').innerHTML = 'Progress: 0%';
+          document.getElementById(videoElements.remoteVideo).srcObject = null;
+        }
+      }
+
+      function loadProgress(progress) {
+        console.log('Progress - ' + progress.percent);
+        document.getElementById('progress').innerHTML =
+          'Progress: ' + (progress.percent * 100).toFixed(0) + '%';
+        if (progress.percent === 1) {
+          document.getElementById('progress').style.visibility = 'hidden';
+          document.getElementById('progress').style.display = 'none';
+        } else {
+          document.getElementById('progress').style.visibility = 'visible';
+          document.getElementById('progress').style.display = 'flex';
+        }
+      }
+
+      function toggleMic() {
+        let permissionGranted = trulience.isPermissionGranted('mic');
+        console.log('permissionGranted - ' + permissionGranted);
+        if (permissionGranted && !needMicAccess) {
+          trulience.toggleMic();
+        } else {
+          showMicPermissionsErrorDialog();
+        }
+      }
+
+      function toggleSpeaker() {
+        trulience.toggleSpeaker();
+      }
+
+      function sendText() {
+        var msg = document.getElementById('textBox').value;
+        document.getElementById('textBox').value = '';
+        trulience.sendMessage(msg);
+      }
+    </script>
+
+    <div id="root">
+      <video
+        style="width: 100%; height: 100%; background-color: #333"
+        webkit-playsinline
+        playsinline
+        crossorigin="anonymous"
+        id="myvideo"
+        autoplay
+      ></video>
+      <div class="toolbar" id="progress">Progress: 0%</div>
+    </div>
+    <div
+      id="controls"
+      style="
+        position: absolute;
+        bottom: 0;
+        width: 100vw;
+        height: 185px;
+        background-color: transparent;
+      "
+    >
+      <div class="toolbar">
+        <button id="connect" style="padding: 10px" onclick="startCall()">
+          Call
+        </button>
+        <button
+          id="disconnect"
+          style="padding: 10px"
+          onclick="endCall()"
+          disabled
+        >
+          End Call
+        </button>
+        <button
+          id="micButton"
+          onclick="toggleMic()"
+          style="padding: 10px"
+          disabled
+        >
+          Mute Mic
+        </button>
+        <button
+          id="speakerButton"
+          onclick="toggleSpeaker()"
+          style="padding: 10px"
+          disabled
+        >
+          Mute Speaker
+        </button>
+      </div>
+      <div class="toolbar">
+        <textarea id="textBox" rows="3"></textarea>
+        <button id="submitButton" onclick="sendText()" style="padding: 10px">
+          Submit
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

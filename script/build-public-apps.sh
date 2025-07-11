@@ -20,6 +20,18 @@ build_react_project() {
   cd "$ROOT"
 }
 
+build_html_file() {
+  cd "$ROOT"
+  local project_dir=$1
+ 
+  # Copy all HTML files from the root html directory
+  echo "============== COPYING ALL HTML FILES FROM html/ TO $BUILD_ROOT/$project_dir ====================="
+  mkdir -p "$BUILD_ROOT/$project_dir"
+  find "$ROOT/$project_dir" -maxdepth 1 -name '*.html' -exec cp {} "$BUILD_ROOT/$project_dir/" \;
+
+  cd "$ROOT"
+}
+
 # Function to copy builds to the public folder
 echo "TARGET ===> $TARGET"
 echo "BUILD PATH ===> $BUILD_ROOT"
@@ -27,5 +39,6 @@ echo "BUILD PATH ===> $BUILD_ROOT"
 # Main execution
 build_react_project "trulience-ai"
 build_react_project "audio-driven"
+build_html_file "html"
 
 echo "============== BUILD SUCCESS ====================="
