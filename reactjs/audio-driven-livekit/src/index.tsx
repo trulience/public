@@ -32,7 +32,7 @@ const Agent = forwardRef((props: any, ref) => {
   // Provide the media stream to the TrulienceAvatar component.
   useEffect(() => {
     // Check if the ref is set and call a method on it
-    if (trulienceAvatarRef.current) {
+    if (trulienceAvatarRef.current && mediaStream) {
       console.log("Setting MediaStream on TrulienceAvatar");
       
       // Set the media stream to make avatar speak the text.
