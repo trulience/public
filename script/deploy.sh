@@ -17,9 +17,6 @@ do_exit() {
 
 cd /home/ubuntu/ASSETS/BUILD/public-apps
 
-sleep $(shuf -i 2-5 -n 1)
-
-
 lock(){
   if [ -f ~/APPSBUILD.lock ]; then
     echo "BUILD BUSY" "$(cat ~/APPSBUILD.lock)"
