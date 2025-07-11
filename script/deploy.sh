@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-exec > build.log 2>&1
+exec > >(tee build.log) 2>&1
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
