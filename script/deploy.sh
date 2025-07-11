@@ -29,7 +29,8 @@ lock(){
 }
 
 
-(git fetch && git reset --hard HEAD && git merge origin/main) || (do_exit "git pull failed")
+#(git fetch && git reset --hard HEAD && git merge origin/main) || (do_exit "git pull failed")
+(git checkout main && git pull) || (do_exit "git pull failed")
 
 script/should-build  || do_exit "no change"
 
