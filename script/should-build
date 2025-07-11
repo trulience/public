@@ -8,10 +8,14 @@ echo $CURRENT > current-commit
 LAST=$(cat last-build-commit 2> /dev/null)
 
 if [ "$CURRENT" == "$LAST" ]; then
-	#echo No build required
+	if [ "last-build-commit" -ot "/home/ubuntu/ASSETS/www/release/prod/BUILD_NUMBER.txt" ]; then
+		echo Build required due to new sdk
+		exit 0
+	fi
+	echo No build required
 	exit -1
 else
-	#echo Build required
+	echo Build required due to new commit
 	exit 0
 fi
 
