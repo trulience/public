@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+exec &>> build/apps-build.log
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
@@ -29,8 +30,9 @@ lock(){
 
 (git fetch && git reset --hard HEAD && git merge origin/main) || (do_exit "git pull failed")
 
-scripts/should-build  || do_exit "no change"
+script/should-build  || do_exit "no change"
 
-sh script/build-public-apps.sh prod
-rsync -avz build/* /home/ubuntu/ASSETS/www/apps/public/
-cp current-commit last-build-commit
+sh script/build-public-apps.sh prod 
+rsync -avz build/* /home/ubuntu/ASSETS/www/apps/public/ 
+cp current-commit last-build-commit 
+do_exit 'APPS BUILD DONE'
