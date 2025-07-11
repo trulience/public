@@ -35,6 +35,6 @@ lock(){
 script/should-build  || do_exit "no change"
 
 sh script/build-public-apps.sh prod 
-rsync -avz build/* /home/ubuntu/ASSETS/www/apps/public/ 
+rsync -avz --delete build/* /home/ubuntu/ASSETS/www/apps/public/ 
 cp current-commit last-build-commit 
 do_exit 'APPS BUILD DONE'
