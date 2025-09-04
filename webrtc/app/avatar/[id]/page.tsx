@@ -78,6 +78,17 @@ export default function AvatarPage() {
         }
       });
 
+      channel.onopen = () => {
+        const event = {
+          type: "response.create",
+          response: {
+            instructions:
+              "Start the conversation with a greeting in English. Introduce yourself as a Trulience client side AI avatar.",
+          },
+        };
+        channel.send(JSON.stringify(event));
+      };
+
       // Create offer
       const offer = await newPc.createOffer();
       await newPc.setLocalDescription(offer);
@@ -143,7 +154,7 @@ export default function AvatarPage() {
       </div>
       <button
         onClick={connected ? disconnectSession : startSession}
-        className={`absolute bottom-6 px-6 py-3 rounded-lg text-white font-semibold transition ${
+        className={`cursor-pointer absolute bottom-6 px-6 py-3 rounded-lg text-white font-semibold transition ${
           connected
             ? "bg-red-600 hover:bg-red-700"
             : "bg-blue-600 hover:bg-blue-700"
