@@ -8,6 +8,7 @@ import Vapi from "@vapi-ai/web";
 export default function AvatarPage() {
   const { id } = useParams();
   const [connected, setConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const trulienceRef = useRef<any>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -25,6 +26,7 @@ export default function AvatarPage() {
 
   const startSession = async () => {
     try {
+      setConnecting(true);
       const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
       const VAPI_ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
 
@@ -42,6 +44,7 @@ export default function AvatarPage() {
       vapiInstance.on("call-start", () => {
         console.log("Vapi call started");
         setConnected(true);
+        setConnecting(false);
       });
 
       vapiInstance.on("call-end", () => {
@@ -138,6 +141,7 @@ export default function AvatarPage() {
     } catch (err) {
       console.error("Error starting session:", err);
       setConnected(false);
+      setConnecting(false);
     }
   };
 
@@ -164,10 +168,10 @@ export default function AvatarPage() {
       <h1 className="text-3xl font-bold">Trulience Vapi Demo</h1>
       <button
         onClick={startSession}
-        className="px-4 py-2 bg-blue-600 text-white rounded"
-        disabled={connected}
+        className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+        disabled={connected || connecting}
       >
-        {connected ? "Connected" : "Start Session"}
+        {connected ? "Connected" : connecting ? "Connecting..." : "Start Session"}
       </button>
       <div className="absolute inset-0">
         <TrulienceAvatar
@@ -182,13 +186,14 @@ export default function AvatarPage() {
       </div>
       <button
         onClick={connected ? disconnectSession : startSession}
-        className={`cursor-pointer absolute bottom-6 px-6 py-3 rounded-lg text-white font-semibold transition ${
+        disabled={connecting}
+        className={`cursor-pointer absolute bottom-6 px-6 py-3 rounded-lg text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed ${
           connected
             ? "bg-red-600 hover:bg-red-700"
             : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
-        {connected ? "Disconnect" : "Connect"}
+        {connected ? "Disconnect" : connecting ? "Connecting..." : "Connect"}
       </button>
     </main>
   );
