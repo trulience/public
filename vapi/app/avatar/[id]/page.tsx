@@ -171,7 +171,11 @@ export default function AvatarPage() {
         className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
         disabled={connected || connecting}
       >
-        {connected ? "Connected" : connecting ? "Connecting..." : "Start Session"}
+        {connected
+          ? "Connected"
+          : connecting
+          ? "Connecting..."
+          : "Start Session"}
       </button>
       <div className="absolute inset-0">
         <TrulienceAvatar
@@ -182,6 +186,21 @@ export default function AvatarPage() {
           width="100%"
           height="100%"
           eventCallbacks={eventCallbacks}
+          avatarParams={{
+            NativeBar: {
+              enabled: true,
+              style: {
+                bar: {
+                  background: "#3b82f6",
+                },
+                container: {
+                  background: "#e0e0de",
+                  "border-radius": "10px",
+                  height: "10px",
+                },
+              },
+            },
+          }}
         />
       </div>
       <button
