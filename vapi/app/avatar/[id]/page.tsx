@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { TrulienceAvatar } from "@trulience/react-sdk";
 import Vapi from "@vapi-ai/web";
+import { Mic, MicOff, Volume1, VolumeX } from "lucide-react";
 
 export default function AvatarPage() {
   const { id } = useParams();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const trulienceRef = useRef<any>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -154,6 +157,23 @@ export default function AvatarPage() {
     setRemoteStream(null);
   };
 
+  const toggleMic = () => {
+    if (vapi) {
+      vapi.setMuted(!isMicMuted);
+      setIsMicMuted(!isMicMuted);
+    }
+  };
+
+  const toggleSpeaker = () => {
+    if (trulienceRef.current) {
+      const trulienceObj = trulienceRef.current.getTrulienceObject();
+      if (trulienceObj) {
+        trulienceObj.setSpeakerEnabled(isSpeakerMuted);
+        setIsSpeakerMuted(!isSpeakerMuted);
+      }
+    }
+  };
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -166,17 +186,19 @@ export default function AvatarPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-8 gap-6">
       <h1 className="text-3xl font-bold">Trulience Vapi Demo</h1>
-      <button
-        onClick={startSession}
-        className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-        disabled={connected || connecting}
-      >
-        {connected
-          ? "Connected"
-          : connecting
-          ? "Connecting..."
-          : "Start Session"}
-      </button>
+      <div className="flex flex-col items-center gap-4">
+        <button
+          onClick={startSession}
+          className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+          disabled={connected || connecting}
+        >
+          {connected
+            ? "Connected"
+            : connecting
+            ? "Connecting..."
+            : "Start Session"}
+        </button>
+      </div>
       <div className="absolute inset-0">
         <TrulienceAvatar
           ref={trulienceRef}
@@ -214,6 +236,41 @@ export default function AvatarPage() {
       >
         {connected ? "Disconnect" : connecting ? "Connecting..." : "Connect"}
       </button>
+
+      {connected && (
+        <div className="absolute bottom-6 right-6 flex gap-2">
+          <button
+            onClick={toggleMic}
+            className={`p-2 rounded-full text-white transition cursor-pointer ${
+              isMicMuted
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+            title={isMicMuted ? "Unmute Microphone" : "Mute Microphone"}
+          >
+            {isMicMuted ? (
+              <MicOff className="w-5 h-5" />
+            ) : (
+              <Mic className="w-5 h-5" />
+            )}
+          </button>
+          <button
+            onClick={toggleSpeaker}
+            className={`p-2 rounded-full text-white transition cursor-pointer ${
+              isSpeakerMuted
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+            title={isSpeakerMuted ? "Unmute Speaker" : "Mute Speaker"}
+          >
+            {isSpeakerMuted ? (
+              <VolumeX className="w-5 h-5" />
+            ) : (
+              <Volume1 className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      )}
     </main>
   );
 }
