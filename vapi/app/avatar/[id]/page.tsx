@@ -30,6 +30,9 @@ export default function AvatarPage() {
   const startSession = async () => {
     try {
       setConnecting(true);
+      const trulienceObj = trulienceRef.current.getTrulienceObject();
+      trulienceObj.connectGateway();
+
       const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
       const VAPI_ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
 
@@ -149,6 +152,9 @@ export default function AvatarPage() {
   };
 
   const disconnectSession = async () => {
+    const trulienceObj = trulienceRef.current.getTrulienceObject();
+    trulienceObj.disconnectGateway();
+    trulienceObj.preloadAvatar();
     if (vapi) {
       await vapi.stop();
       setVapi(null);
@@ -201,6 +207,8 @@ export default function AvatarPage() {
       </div>
       <div className="absolute inset-0">
         <TrulienceAvatar
+          autoConnect={false}
+          prefetchAvatar={true}
           ref={trulienceRef}
           url={process.env.NEXT_PUBLIC_TRULIENCE_SDK_URL || ""}
           avatarId={id as string}
