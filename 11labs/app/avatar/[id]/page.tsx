@@ -7,7 +7,7 @@ import { Conversation } from "@elevenlabs/client";
 import { Mic, MicOff, Volume1, VolumeX } from "lucide-react";
 
 // Configuration - change this to test different connection types
-const CONNECTION_TYPE: "websocket" | "webrtc" = "webrtc";
+const CONNECTION_TYPE: "websocket" | "webrtc" = "websocket";
 
 export default function AvatarPage() {
   const { id } = useParams();
@@ -30,6 +30,62 @@ export default function AvatarPage() {
     },
   };
 
+  // Helper function to set up WebSocket audio routing
+  const setupWebSocketAudio = (conversation: any) => {
+    const outputInstance = conversation.output;
+    const context = outputInstance.context;
+    const mediaStreamDestination = context.createMediaStreamDestination();
+
+    outputInstance.gain.disconnect();
+    outputInstance.gain.connect(mediaStreamDestination);
+    outputInstance.mediaStream = mediaStreamDestination.stream;
+
+    return outputInstance.mediaStream;
+  };
+
+  // Helper function to set up WebRTC audio routing
+  const setupWebRTCAudio = async (conversation: any) => {
+    const outputInstance = conversation.output;
+
+    // Mute ElevenLabs audio element
+    if (outputInstance.audioElement) {
+      outputInstance.audioElement.muted = true;
+      outputInstance.audioElement.volume = 0;
+    }
+
+    // Extract MediaStream from LiveKit
+    const connection = conversation.connection;
+
+    for (let i = 0; i < 50; i++) {
+      const room = connection?.room;
+      if (room?.remoteParticipants) {
+        const participants = Array.from(room.remoteParticipants.values());
+
+        for (const participant of participants) {
+          const audioTracks = (participant as any).audioTrackPublications;
+          if (audioTracks?.size > 0) {
+            const trackPublication = Array.from(audioTracks.values())[0] as any;
+            const liveKitTrack = trackPublication.track;
+
+            if (liveKitTrack?.mediaStream) {
+              // Mute original playback elements
+              liveKitTrack.attachedElements?.forEach((element: any) => {
+                if (element?.muted !== undefined) {
+                  element.muted = true;
+                  element.volume = 0;
+                }
+              });
+
+              return liveKitTrack.mediaStream;
+            }
+          }
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return null;
+  };
+
   const startSession = async () => {
     try {
       setConnecting(true);
@@ -49,46 +105,18 @@ export default function AvatarPage() {
         // handle error
       }
 
-      // Monkey patch Conversation.startSession with different logic for WebSocket vs WebRTC
-      const originalStartSession = Conversation.startSession;
-      Conversation.startSession = async (options: any) => {
-        console.log(`ElevenLabsProvider: options:`, options);
-
-        const conversation = await originalStartSession.call(
-          Conversation,
-          options
-        );
-
-        if (conversation && (conversation as any).output) {
-          const outputInstance = (conversation as any).output;
-          const context = outputInstance.context;
-
-          if (CONNECTION_TYPE === "websocket") {
-            console.log("WebSocket: Using working audio routing");
-            // WebSocket: Working approach - simple disconnect/reconnect
-            const mediaStreamDestination =
-              context.createMediaStreamDestination();
-            outputInstance.gain.disconnect();
-            outputInstance.gain.connect(mediaStreamDestination);
-            (outputInstance as any).mediaStream = mediaStreamDestination.stream;
-          } else {
-            console.log("WebRTC: Using LiveKit audio tracks approach");
-            // WebRTC: Get MediaStream from LiveKit connection instead of Web Audio API
-
-            // Still mute the audio element to prevent double audio
-            if (outputInstance.audioElement) {
-              outputInstance.audioElement.muted = true;
-              outputInstance.audioElement.volume = 0;
-              console.log("WebRTC: Muted audio element");
-            }
-
-            // For WebRTC, we need to get the MediaStream from LiveKit tracks
-            // This will be handled asynchronously after the conversation starts
-            console.log("WebRTC: Will extract MediaStream from LiveKit tracks after connection");
-          }
-        }
-        return conversation;
-      };
+      // Simple monkey patch for WebSocket only
+      if (CONNECTION_TYPE === "websocket") {
+        const originalStartSession = Conversation.startSession;
+        Conversation.startSession = async (options: any) => {
+          const conversation = await originalStartSession.call(
+            Conversation,
+            options
+          );
+          setupWebSocketAudio(conversation);
+          return conversation;
+        };
+      }
 
       // Start conversation with configurable connection type
       const conversationInstance = await Conversation.startSession({
@@ -126,121 +154,22 @@ export default function AvatarPage() {
       setConversation(conversationInstance);
       console.log("ElevenLabsProvider: Conversation started");
 
-      // Wait for the media stream to be available - different logic for WebSocket vs WebRTC
-      let outputInstance: any = undefined;
+      // Get MediaStream based on connection type
       let mediaStream: MediaStream | null = null;
 
       if (CONNECTION_TYPE === "websocket") {
-        // WebSocket: Wait for our custom mediaStream (working approach)
+        // WebSocket: Get from custom mediaStream property
         for (let i = 0; i < 10; i++) {
-          outputInstance = (conversationInstance as any).output;
-          if (outputInstance && (outputInstance as any).mediaStream) {
-            mediaStream = (outputInstance as any).mediaStream;
+          const outputInstance = (conversationInstance as any).output;
+          if (outputInstance?.mediaStream) {
+            mediaStream = outputInstance.mediaStream;
             break;
           }
           await new Promise((resolve) => setTimeout(resolve, 200));
         }
       } else {
-        // WebRTC: Extract MediaStream from LiveKit tracks
-        console.log("WebRTC: Waiting for LiveKit tracks...");
-        const webrtcConnection = (conversationInstance as any).connection;
-
-        const waitForTracks = async () => {
-          for (let i = 0; i < 50; i++) {
-            try {
-              const room = webrtcConnection?.room;
-              if (room?.remoteParticipants) {
-                const participants = Array.from(room.remoteParticipants.values());
-
-                for (const participant of participants) {
-                  const liveKitParticipant = participant as any;
-
-                  // Check audioTrackPublications
-                  if (liveKitParticipant.audioTrackPublications && liveKitParticipant.audioTrackPublications.size > 0) {
-                    const audioTrackPublication = Array.from(liveKitParticipant.audioTrackPublications.values())[0] as any;
-
-                    // Check if the track is subscribed
-                    if (audioTrackPublication.track) {
-                      const liveKitTrack = audioTrackPublication.track as any;
-
-                      // Try to get MediaStream from LiveKit RemoteAudioTrack
-                      if (liveKitTrack.mediaStream && liveKitTrack.mediaStream instanceof MediaStream) {
-                        console.log("WebRTC: Found MediaStream from LiveKit RemoteAudioTrack:", liveKitTrack.mediaStream);
-
-                        // Mute the attached audio elements to prevent original audio playback
-                        // Keep the MediaStreamTrack enabled so Trulience can analyze the data
-                        if (liveKitTrack.attachedElements && Array.isArray(liveKitTrack.attachedElements)) {
-                          liveKitTrack.attachedElements.forEach((element: any) => {
-                            if (element && element.muted !== undefined) {
-                              element.muted = true;
-                              element.volume = 0;
-                              console.log("WebRTC: Muted attached audio element");
-                            }
-                          });
-                        }
-
-                        // Also check for any other audio elements that might be playing the stream
-                        const allAudioElements = document.querySelectorAll('audio');
-                        allAudioElements.forEach((audio) => {
-                          if (audio.srcObject === liveKitTrack.mediaStream) {
-                            audio.muted = true;
-                            audio.volume = 0;
-                            console.log("WebRTC: Muted DOM audio element playing LiveKit stream");
-                          }
-                        });
-
-                        return liveKitTrack.mediaStream;
-                      }
-
-                      // Try to get MediaStreamTrack from LiveKit RemoteAudioTrack
-                      if (liveKitTrack._mediaStreamTrack && liveKitTrack._mediaStreamTrack instanceof MediaStreamTrack) {
-                        console.log("WebRTC: Found MediaStreamTrack from LiveKit RemoteAudioTrack");
-                        const stream = new MediaStream([liveKitTrack._mediaStreamTrack]);
-                        console.log("WebRTC: Created MediaStream from LiveKit MediaStreamTrack:", stream);
-                        return stream;
-                      }
-
-                      // Try mediaStreamTrack property (without underscore)
-                      if (liveKitTrack.mediaStreamTrack && liveKitTrack.mediaStreamTrack instanceof MediaStreamTrack) {
-                        console.log("WebRTC: Found mediaStreamTrack from LiveKit RemoteAudioTrack");
-                        const stream = new MediaStream([liveKitTrack.mediaStreamTrack]);
-                        console.log("WebRTC: Created MediaStream from LiveKit mediaStreamTrack:", stream);
-                        return stream;
-                      }
-
-                      if (i === 0) {
-                        console.log("WebRTC: RemoteAudioTrack found but no valid MediaStream/MediaStreamTrack:", liveKitTrack);
-                      }
-                    } else {
-                      if (i === 0) console.log("WebRTC: Track not available yet, waiting...");
-                    }
-                  }
-
-                  // Also check trackPublications as fallback
-                  if (liveKitParticipant.trackPublications && liveKitParticipant.trackPublications.size > 0) {
-                    for (const [trackId, publication] of liveKitParticipant.trackPublications.entries()) {
-                      const pub = publication as any;
-                      if (pub.kind === 'audio' && pub.track && pub.track instanceof MediaStreamTrack) {
-                        console.log("WebRTC: Found valid MediaStreamTrack from generic publication");
-                        const stream = new MediaStream([pub.track]);
-                        return stream;
-                      }
-                    }
-                  }
-                }
-              }
-            } catch (e) {
-              console.log("WebRTC: Error checking for tracks:", e);
-            }
-            await new Promise(resolve => setTimeout(resolve, 100));
-          }
-          return null;
-        };
-
-        mediaStream = await waitForTracks();
-        if (!mediaStream) {
-          console.warn("WebRTC: Could not get MediaStream from LiveKit tracks");
-        }
+        // WebRTC: Extract from LiveKit
+        mediaStream = await setupWebRTCAudio(conversationInstance);
       }
 
       if (mediaStream) {
@@ -257,7 +186,9 @@ export default function AvatarPage() {
           console.log("Speaker enabled on Trulience");
         }
 
-        console.log(`${CONNECTION_TYPE}: MediaStream set to Trulience for lip sync`);
+        console.log(
+          `${CONNECTION_TYPE}: MediaStream set to Trulience for lip sync`
+        );
       } else {
         console.log(`${CONNECTION_TYPE}: mediaStream not available after wait`);
       }
@@ -291,8 +222,6 @@ export default function AvatarPage() {
     if (trulienceRef.current) {
       const trulienceObj = trulienceRef.current.getTrulienceObject();
       if (trulienceObj) {
-        // Fix the logic: if currently muted, enable speaker (unmute)
-        // if currently unmuted, disable speaker (mute)
         const newMutedState = !isSpeakerMuted;
         trulienceObj.setSpeakerEnabled(!newMutedState); // setSpeakerEnabled(true) when unmuted
         setIsSpeakerMuted(newMutedState);
