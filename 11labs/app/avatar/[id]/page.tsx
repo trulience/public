@@ -99,6 +99,10 @@ export default function AvatarPage() {
           console.log("ElevenLabs conversation connected");
           setConnected(true);
           setConnecting(false);
+
+          // Reset mute states on connect
+          setIsMicMuted(false);
+          setIsSpeakerMuted(false);
         },
         onDisconnect: () => {
           console.log("ElevenLabs conversation disconnected");
