@@ -287,8 +287,11 @@ export default function AvatarPage() {
     if (trulienceRef.current) {
       const trulienceObj = trulienceRef.current.getTrulienceObject();
       if (trulienceObj) {
-        trulienceObj.setSpeakerEnabled(!isSpeakerMuted);
-        setIsSpeakerMuted(!isSpeakerMuted);
+        // Fix the logic: if currently muted, enable speaker (unmute)
+        // if currently unmuted, disable speaker (mute)
+        const newMutedState = !isSpeakerMuted;
+        trulienceObj.setSpeakerEnabled(!newMutedState); // setSpeakerEnabled(true) when unmuted
+        setIsSpeakerMuted(newMutedState);
       }
     }
   };
