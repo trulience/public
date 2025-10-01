@@ -207,6 +207,9 @@ export default function AvatarPage() {
       </div>
       <div className="absolute inset-0">
         <TrulienceAvatar
+          envParams={{
+            useAgoraVideo: true,
+          }}
           autoConnect={false}
           prefetchAvatar={true}
           ref={trulienceRef}
