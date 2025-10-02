@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { TrulienceAvatar } from "@trulience/react-sdk";
 import Vapi from "@vapi-ai/web";
 import { Mic, MicOff, Volume1, VolumeX } from "lucide-react";
 
 export default function AvatarPage() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -39,12 +40,12 @@ export default function AvatarPage() {
       const trulienceObj = trulienceRef.current.getTrulienceObject();
       trulienceObj.connectGateway();
 
-      const VAPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
-      const VAPI_ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
+      const VAPI_PUBLIC_KEY = searchParams.get("publicKey") || process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY;
+      const VAPI_ASSISTANT_ID = searchParams.get("assistantId") || process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
 
       if (!VAPI_PUBLIC_KEY || !VAPI_ASSISTANT_ID) {
         throw new Error(
-          "Missing VAPI_PUBLIC_KEY or VAPI_ASSISTANT_ID in environment variables"
+          "Missing VAPI_PUBLIC_KEY or VAPI_ASSISTANT_ID (provide via ?publicKey and ?assistantId query params or environment variables)"
         );
       }
 
