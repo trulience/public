@@ -18,12 +18,18 @@ export default function AvatarPage() {
 
   const eventCallbacks = {
     "websocket-connect": () => {
-      console.log("Trulience websocket connected, attaching stream");
-      if (remoteStream && trulienceRef.current) {
-        trulienceRef.current.setMediaStream(remoteStream);
-        trulienceRef.current.getTrulienceObject().setSpeakerEnabled(true);
-        console.log("Stream attached and speaker enabled (happy path)");
+      console.log("Trulience websocket connected");
+      // Ensure speaker is enabled after websocket connects
+      if (trulienceRef.current) {
+        const trulienceObj = trulienceRef.current.getTrulienceObject();
+        if (trulienceObj) {
+          console.log("Enabling speaker after websocket connect");
+          trulienceObj.setSpeakerEnabled(true);
+        }
       }
+    },
+    "onConnected": () => {
+      console.log("Trulience onConnected event - speaker already enabled, not calling setSpeakerEnabled again");
     },
   };
 
