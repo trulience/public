@@ -236,9 +236,6 @@ export default function AvatarPage() {
           width="100%"
           height="100%"
           eventCallbacks={eventCallbacks}
-          envParams={{
-            useAgoraVideo: true
-          }}
           avatarParams={{
             NativeBar: {
               enabled: true,
