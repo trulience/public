@@ -80,6 +80,16 @@ export default function AvatarPage() {
 
       vapiInstance.on("message", (message) => {
         console.log("Vapi message:", message);
+
+        if(message.type === "model-output") {
+          const trulienceObj = trulienceRef.current.getTrulienceObject();
+          try {
+            if(trulienceObj.processSSML)
+              trulienceObj.processSSML({ text: message.output }, "chunk");
+          } catch (error) {
+            console.error("Error while handling model output: ", error )
+          }
+        }
       });
 
       vapiInstance.on("error", (error) => {
@@ -226,6 +236,9 @@ export default function AvatarPage() {
           width="100%"
           height="100%"
           eventCallbacks={eventCallbacks}
+          envParams={{
+            useAgoraVideo: true
+          }}
           avatarParams={{
             NativeBar: {
               enabled: true,
