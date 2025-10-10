@@ -95,10 +95,15 @@ function generateResponse(userMessage, sessionId) {
   const sessionDetails = sessions.get(sessionId);
 
   // Special command: trigger callback
-  if (userMessage.trim().toLowerCase() === "/sendcustomdata") {
+  if (userMessage.trim().toLowerCase() === "/push-custom-ssml-webhook") {
     sendCustomData(sessionDetails, sessionId);
     return "Custom data sending separately.";
   }
+
+  if (userMessage.trim().toLowerCase() === "/send-custom-ssml") {
+    return `<trl-custom-rest-json json='{"name":"ABC","id":123,"server":true}' />`;
+  }
+
 
   // Default echo response
   return `I received your message: ${userMessage}. How else can I help?`;

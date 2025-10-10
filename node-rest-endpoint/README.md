@@ -14,7 +14,9 @@ This is a sample **Express.js server** that demonstrates how to manage user sess
 * **Chat Handling**
 
   * `CHAT` → echo back user messages
-  * Special command `/sendcustomdata` → triggers a callback (`/tslisten`)
+  * Special command `/push-custom-ssml-webhook` → triggers a callback (`/tslisten`)
+  * Special command `/send-custom-ssml` → send the custom data as a response for testing using 
+`?registerCustomSSML=trl-custom-rest-json` url param
 
 * **Callback Support**
 
@@ -26,7 +28,7 @@ This is a sample **Express.js server** that demonstrates how to manage user sess
 
 ```bash
 npm start
-npm dev
+npm run dev
 ```
 
 You should see:
